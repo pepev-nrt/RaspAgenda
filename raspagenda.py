@@ -15,6 +15,8 @@ import sys
 from display.display import DisplayHelper
 import json
 import logging
+from PIL import Image,ImageDraw,ImageFont
+import time
 
 
 def main():
@@ -30,11 +32,29 @@ def main():
     imageHeight = config['imageHeight'] # Height of image to be generated for display.
     rotateAngle = config['rotateAngle']  # If image is rendered in portrait orientation, angle to rotate to fit screen
 
-    print(config)
 
-    displayService = DisplayHelper(screenWidth, screenHeight)
-    displayService.calibrate(cycles=1)  # to calibrate in production
-    displayService.sleep()  # go to sleep
+    if isDisplayConected:
+        from display.display import DisplayHelper
+
+        displayService = DisplayHelper(screenWidth, screenHeight)
+        
+        image = Image.open('assets/test.bmp')
+        draw = ImageDraw.Draw(image)
+        draw.rectangle([(0,0),(50,50)],outline = 0)
+        draw.rectangle([(55,0),(100,50)],fill = 0)
+        draw.line([(0,0),(50,50)], fill = 0,width = 1)
+        draw.line([(0,50),(50,0)], fill = 0,width = 1)
+        draw.chord((10, 60, 50, 100), 0, 360, fill = 0)
+        draw.ellipse((55, 60, 95, 100), outline = 0)
+        draw.pieslice((55, 60, 95, 100), 90, 180, outline = 0)
+        draw.pieslice((55, 60, 95, 100), 270, 360, fill = 0)
+        draw.polygon([(110,0),(110,50),(150,25)],outline = 0)
+        draw.polygon([(190,0),(190,50),(150,25)],fill = 0)
+
+
+        displayService.update(image)  # go to sleep
+        displayService.clear()
+        displayService.sleep()  # go to sleep
 
 
 if __name__ == "__main__":
