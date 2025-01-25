@@ -17,13 +17,13 @@ class DisplayHelper:
         self.screenwidth = width
         self.screenheight = height
         self.epd = eink.EPD()
-        self.epd.Init()
+        self.epd.init()
 
     def update(self, img):
         # Updates the display with the grayscale and red images
         # start displaying on eink display
         # self.epd.clear()
-        self.epd.display(mg)
+        self.epd.display(img)
         self.logger.info('E-Ink display update complete.')
 
     def calibrate(self, cycles=1):
@@ -38,5 +38,5 @@ class DisplayHelper:
 
     def sleep(self):
         # send E-Ink display to deep sleep
-        self.epd.EPD_Sleep()
+        self.epd.sleep()
         self.logger.info('E-Ink display entered deep sleep.')
