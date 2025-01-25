@@ -31,9 +31,10 @@ class DisplayHelper:
         white = Image.new('1', (self.screenwidth, self.screenheight), 'white')
         black = Image.new('1', (self.screenwidth, self.screenheight), 'black')
         for _ in range(cycles):
-            self.epd.display(black, white)
-            self.epd.display(white, black)
-            self.epd.display(white, white)
+            self.epd.display(self.epd.getbuffer(black))
+            self.epd.display(self.epd.getbuffer(white))
+            self.epd.display(self.epd.getbuffer(black))
+            self.epd.display(self.epd.getbuffer(white))
         self.logger.info('E-Ink display calibration complete.')
 
     def sleep(self):
