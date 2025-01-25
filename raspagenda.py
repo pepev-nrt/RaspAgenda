@@ -33,7 +33,7 @@ def main():
     print(config)
 
     displayService = DisplayHelper(screenWidth, screenHeight)
-    displayService.calibrate(cycles=1)  # to calibrate in production
+    displayService.calibrate(cycles=0)  # to calibrate in production
     displayService.sleep()  # go to sleep
 
 
