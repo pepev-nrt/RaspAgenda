@@ -1,0 +1,15 @@
+{
+  "displayTZ": "Spain/Madrid",
+  "thresholdHours": 24,
+  "maxEventsPerDay": 3,
+  "isDisplayToScreen": false,
+  "isShutdownOnComplete": false,
+  "weekStartDay": 6,
+  "dayOfWeekText": ["L", "M", "X", "J", "V", "S", "D"],
+  "screenWidth": 250,
+  "screenHeight": 122,
+  "imageWidth": 250,
+  "imageHeight": 122,
+  "rotateAngle": 180,
+  "is24h": false,
+}
