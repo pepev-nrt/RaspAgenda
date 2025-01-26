@@ -21,7 +21,7 @@ from PIL import Image,ImageDraw,ImageFont
 def main():
     # Basic configuration settings (user replaceable)
     # config.json is in the root folder
-    configFile = open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'config.json'))
+    configFile = open(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'config.json'))
     config = json.load(configFile)
 
 
@@ -40,30 +40,41 @@ def main():
         time = dt.datetime.now().strftime("%H:%M")
 
 
-    assets = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'assets')
+    assets = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'assets')
+    fontsdir = os.path.join(assets, 'fonts')
     # Drawing on the image
-    font15 = ImageFont.truetype(os.path.join(assets, 'wavesharefont.ttc'), 15)
-    font24 = ImageFont.truetype(os.path.join(assets, 'wavesharefont.ttc'), 24)
-    font8 = ImageFont.truetype(os.path.join(os.path.join(assets, 'pixel_operator'), 'PixelOperator8.ttf'), 8)
-    font16 = ImageFont.truetype(os.path.join(os.path.join(assets, 'pixel_operator'), 'PixelOperator.ttf'), 16)
-    font16_bold = ImageFont.truetype(os.path.join(os.path.join(assets, 'pixel_operator'), 'PixelOperator-Bold.ttf'), 16)
+    font15 = ImageFont.truetype(os.path.join(fontsdir, 'wavesharefont.ttc'), 15)
+    font24 = ImageFont.truetype(os.path.join(fontsdir, 'wavesharefont.ttc'), 24)
+
+    # pixel_operator fonts
+    font8 = ImageFont.truetype(os.path.join(os.path.join(fontsdir, 'pixel_operator'), 'PixelOperator8.ttf'), 8)
+    font8_bold = ImageFont.truetype(os.path.join(os.path.join(fontsdir, 'pixel_operator'), 'PixelOperator8-Bold.ttf'), 8)
+    font16 = ImageFont.truetype(os.path.join(os.path.join(fontsdir, 'pixel_operator'), 'PixelOperator.ttf'), 16)
+    font16_bold = ImageFont.truetype(os.path.join(os.path.join(fontsdir, 'pixel_operator'), 'PixelOperator-Bold.ttf'), 16)
+
+    font16_2 = ImageFont.truetype(os.path.join(fontsdir, 'Better VCR 9.0.1.ttf'), 16)
+    font8_2 = ImageFont.truetype(os.path.join(fontsdir, 'Better VCR 9.0.1.ttf'), 12)
 
 
 
-    #image = Image.open('assets/test4.bmp')
     image = Image.new('1', (imageWidth, imageHeight), 255)  # 255: clear the frame    
     draw = ImageDraw.Draw(image)
 
-    draw.text((0, 0), time, font = font16_bold, fill = 0) # draw the current time in the top left corner
+    fonts8 = [font8, font8_bold, font8_2]
+    fonts16 = [font16, font16_bold, font16_2]
+    y = 0
+    for font in fonts8:
+        draw.text((0, y), f"Lore Ipso sum {time}", font = font, fill = 0) # draw the current time in the top left corner
+        y += 12
+        if y >= screenHeight:
+            break
+        
+    for font in fonts16:
+        draw.text((0, y), f"Lore Ipso sum {time}", font = font, fill = 0) # draw the current time in the top left corner
+        y += 16
+        if y >= screenHeight:
+            break
 
-    draw.line([(0,16),(250,16)], fill = 0,width = 2)
-    draw.line([(125,16),(125,122)], fill = 0,width = 2)
-
-    cal_icon = Image.open(os.path.join(assets, "cal-icon.bmp"))
-
-    image.paste(cal_icon, (129,24))
-
-    draw.text((160, 26), 'Agenda', font = font16_bold, fill = 0)
 
     # draw.line([(0,50),(50,0)], fill = 0,width = 1)
     # draw.chord((10, 60, 50, 100), 0, 360, fill = 0)
@@ -74,7 +85,7 @@ def main():
     # draw.polygon([(190,0),(190,50),(150,25)],fill = 0)
     # draw.rectangle([(0,0),(50,50)],outline = 0)
 
-    image.save(os.path.join(assets, 'output.bmp'))
+    image.save(os.path.join(assets, 'test-fonts.bmp'))
 
 
 
