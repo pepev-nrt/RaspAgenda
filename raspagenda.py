@@ -60,9 +60,9 @@ def main():
     draw.line([(0,16),(250,16)], fill = 0,width = 2)
     draw.line([(125,16),(125,122)], fill = 0,width = 2)
 
-    cal_icon = Image.open(os.path.join(assets, "cal-icon.bmp"))
+    cal_icon = Image.open(os.path.join(assets, "cal-icon3.bmp"))
 
-    image.paste(cal_icon, (129,24))
+    image.paste(cal_icon, (129,20))
 
     draw.text((160, 26), 'Agenda', font = font16_bold, fill = 0)
 
@@ -83,8 +83,8 @@ def main():
         from display.display import DisplayHelper
 
         displayService = DisplayHelper(screenWidth, screenHeight)
-        displayService.update(image.rotate(rotateAngle))  # go to sleep
-        displayService.clear()
+        displayService.update(image.rotate(rotateAngle)) # Displays the image
+        #displayService.clear()
         displayService.sleep()  # go to sleep
 
 
