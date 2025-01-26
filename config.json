@@ -1,9 +1,9 @@
 {
-  "displayTZ": "Spain/Madrid",
-  "isDisplayConected": true,
+  "isDisplayConected": false,
   "screenWidth": 250,
   "screenHeight": 122,
   "imageWidth": 250,
   "imageHeight": 122,
-  "rotateAngle": 180
+  "rotateAngle": 180,
+  "hourFormat": "12h"
 }
