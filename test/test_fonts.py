@@ -1,20 +1,13 @@
 #!/usr/bin python3
 # -*- coding: utf-8 -*-
 """
-This project is designed for the WaveShare 12.48" eInk display. Modifications will be needed for other displays,
-especially the display drivers and how the image is being rendered on the display. Also, this is the first project that
-I posted on GitHub so please go easy on me. There are still many parts of the code (especially with timezone
-conversions) that are not tested comprehensively, since my calendar/events are largely based on the timezone I'm in.
-There will also be work needed to adjust the calendar rendering for different screen sizes, such as modifying of the
-CSS stylesheets in the "render" folder.
+This script is created to test the different fonts installed. It may return error if some of them are missing.
 """
 import datetime as dt
+import json
 import os
 import sys
 
-
-import json
-import logging
 from PIL import Image,ImageDraw,ImageFont
 
 
@@ -52,9 +45,9 @@ def main():
     font16 = ImageFont.truetype(os.path.join(os.path.join(fontsdir, 'pixel_operator'), 'PixelOperator.ttf'), 16)
     font16_bold = ImageFont.truetype(os.path.join(os.path.join(fontsdir, 'pixel_operator'), 'PixelOperator-Bold.ttf'), 16)
 
+    # Better VCR font
     font16_2 = ImageFont.truetype(os.path.join(fontsdir, 'Better VCR 9.0.1.ttf'), 16)
     font8_2 = ImageFont.truetype(os.path.join(fontsdir, 'Better VCR 9.0.1.ttf'), 12)
-
 
 
     image = Image.new('1', (imageWidth, imageHeight), 255)  # 255: clear the frame    
@@ -75,25 +68,17 @@ def main():
         if y >= screenHeight:
             break
 
-
-    # draw.line([(0,50),(50,0)], fill = 0,width = 1)
-    # draw.chord((10, 60, 50, 100), 0, 360, fill = 0)
-    # draw.ellipse((55, 60, 95, 100), outline = 0)
-    # draw.pieslice((55, 60, 95, 100), 90, 180, outline = 0)
-    # draw.pieslice((55, 60, 95, 100), 270, 360, fill = 0)
-    # draw.polygon([(110,0),(110,50),(150,25)],outline = 0)
-    # draw.polygon([(190,0),(190,50),(150,25)],fill = 0)
-    # draw.rectangle([(0,0),(50,50)],outline = 0)
-
     image.save(os.path.join(assets, 'test-fonts.bmp'))
 
 
-
     if isDisplayConected:
+        # This line is necesary to be able to acceass the modules from this folder
+        # We are basically adding the root folder of the proyect to the path
+        sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
         from display.display import DisplayHelper
 
         displayService = DisplayHelper(screenWidth, screenHeight)
-        displayService.update(image.rotate(rotateAngle))  # go to sleep
+        displayService.update(image.rotate(rotateAngle))
         displayService.clear()
         displayService.sleep()  # go to sleep
 

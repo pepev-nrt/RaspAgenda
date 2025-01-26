@@ -41,12 +41,13 @@ def main():
 
 
     assets = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'assets')
+    fonts = os.path.join(assets, 'fonts')
     # Drawing on the image
-    font15 = ImageFont.truetype(os.path.join(assets, 'wavesharefont.ttc'), 15)
-    font24 = ImageFont.truetype(os.path.join(assets, 'wavesharefont.ttc'), 24)
-    font8 = ImageFont.truetype(os.path.join(os.path.join(assets, 'pixel_operator'), 'PixelOperator8.ttf'), 8)
-    font16 = ImageFont.truetype(os.path.join(os.path.join(assets, 'pixel_operator'), 'PixelOperator.ttf'), 16)
-    font16_bold = ImageFont.truetype(os.path.join(os.path.join(assets, 'pixel_operator'), 'PixelOperator-Bold.ttf'), 16)
+    font15 = ImageFont.truetype(os.path.join(fonts, 'wavesharefont.ttc'), 15)
+    font24 = ImageFont.truetype(os.path.join(fonts, 'wavesharefont.ttc'), 24)
+    font8 = ImageFont.truetype(os.path.join(os.path.join(fonts, 'pixel_operator'), 'PixelOperator8.ttf'), 8)
+    font16 = ImageFont.truetype(os.path.join(os.path.join(fonts, 'pixel_operator'), 'PixelOperator.ttf'), 16)
+    font16_bold = ImageFont.truetype(os.path.join(os.path.join(fonts, 'pixel_operator'), 'PixelOperator-Bold.ttf'), 16)
 
 
 
