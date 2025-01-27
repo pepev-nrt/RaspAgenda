@@ -1,9 +1,16 @@
 {
   "isDisplayConected": false,
+
   "screenWidth": 250,
   "screenHeight": 122,
   "imageWidth": 250,
   "imageHeight": 122,
   "rotateAngle": 180,
-  "hourFormat": "12h"
+
+  "hourFormat": "12h",
+
+  "latitude": 40.4084,
+  "longitude": -3.6876,
+  "timezone": "Europe/Madrid",
+  "locales": "es_ES.UTF-8"
 }

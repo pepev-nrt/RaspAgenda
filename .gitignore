@@ -1,3 +1,7 @@
+# Specific for my project
+.cache.sqlite
+
+# Python generic .gitignore
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
