@@ -18,6 +18,7 @@ import json
 import logging
 from PIL import Image,ImageDraw,ImageFont
 
+from cal.cal import CalendarHelper
 from weather.weather import WeatherHelper
 
 
@@ -29,19 +30,29 @@ def main():
 
 
     isDisplayConected = config['isDisplayConected']  # set to true when debugging rendering without displaying to screen
+    
     screenWidth       = config['screenWidth']  # Width of E-Ink display. Default is landscape. Need to rotate image to fit.
     screenHeight      = config['screenHeight']  # Height of E-Ink display. Default is landscape. Need to rotate image to fit.
     imageWidth        = config['imageWidth']  # Width of image to be generated for display.
     imageHeight       = config['imageHeight'] # Height of image to be generated for display.
     rotateAngle       = config['rotateAngle']  # If image is rendered in portrait orientation, angle to rotate to fit screen
+    
     hourFormat        = config['hourFormat'] # The format the hour will be displayed. eg. 13:02 or 01:02 PM
+    
     latitude          = config['latitude'] # A float. The latitude for the Weather API.
     longitude         = config['longitude'] # A float. The longitude for the Weather API.
     timezone          = config['timezone'] # The timezone is necesary for the Weather API
-    locales            = config['locales'] # Set the locales for the month name
+    locales           = config['locales'] # Set the locales for the month name
 
-    weatherService = WeatherHelper(latitude, longitude, timezone)
-    weather_data = weatherService.fetch_open_meteo_data()
+    caldavURL         = config['caldavURL'] # URL to Caldav calendar. eg. 'https://nextcloud.example/remote.php/dav'
+    caldavUser        = config['caldavUser'] # Caldav username
+    caldavPassword    = config['caldavPassword'] # Caldav password
+    caldavBlacklist   = config ['caldavBlacklist'] # Caldav list of calendars to be ommited
+    # Convert json "str1, str2" to a python list
+    caldavBlacklist = caldavBlacklist.split(',')
+    for i in range(len(caldavBlacklist)):
+        caldavBlacklist[i-1] = caldavBlacklist[i-1].strip()
+
 
     locale.setlocale(locale.LC_TIME, locales)
     
@@ -52,6 +63,8 @@ def main():
         time = dt.datetime.now().strftime("%H:%M")
 
     day = dt.datetime.now().strftime("%A, %d %b")
+    tomorrow = dt.datetime.now() + dt.timedelta(days=1)
+    tomorrow = dt.datetime.strftime(tomorrow, "%A, %d %b")
 
 
     assets = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'assets')
@@ -67,6 +80,7 @@ def main():
     image = Image.new('1', (imageWidth, imageHeight), 255)  # 255: clear the frame    
     draw = ImageDraw.Draw(image)
 
+    # Draw todays date
     draw.text((0, 0), f"{day}. {time}", font = font16_bold, fill = 0) # draw the current time in the top left corner
 
     # Frames
@@ -77,42 +91,97 @@ def main():
     # Calendar icon
     cal_coordinates_x = 207
     cal_coordinates_y = 2
-
     cal_icon = Image.open(os.path.join(assets, "cal-icon3.bmp")) # calendar icon
     # This seems complicates, but it just draw a white rectangle bellow the calendar
     draw.rectangle([(cal_coordinates_x-2, cal_coordinates_y),(cal_coordinates_x + 28, cal_coordinates_y + 30)], fill = 255)
     image.paste(cal_icon, (cal_coordinates_x, cal_coordinates_y))
 
     # LEFT SEGMENT (WEATHER)
-    # Todays information
-    today_icon = weatherService.iconize_weather(weather_data["current_weather_code"])
-    today_icon = Image.open(os.path.join(weather_icons, today_icon))
-    image.paste(today_icon, (29,20))
+    try:
+        # Todays information
+        weatherService = WeatherHelper(latitude, longitude, timezone)
 
-    today_temperature = f"{str(weather_data['current_temperature_2m'])}°"
-    draw.text((66,28), today_temperature, font = font16_bold, fill = 0) # The tomorrows temperature is bellow the icon
+        weather_data = weatherService.fetch_open_meteo_data()
+        today_icon = weatherService.iconize_weather(weather_data["current_weather_code"])
+        today_icon = Image.open(os.path.join(weather_icons, today_icon))
+        image.paste(today_icon, (29,20))
+
+        today_temperature = f"{str(weather_data['current_temperature_2m'])}°"
+        draw.text((66,28), today_temperature, font = font16_bold, fill = 0) # The tomorrows temperature is bellow the icon
 
 
-    #draw.text((160, 26), 'Agenda', font = font16_bold, fill = 0)
+        #draw.text((160, 26), 'Agenda', font = font16_bold, fill = 0)
 
-    # All the tomorrows information
-    tomorrow_icon = weatherService.iconize_weather(weather_data["tomorrow_weather_code"])
-    tomorrow_icon = Image.open(os.path.join(weather_icons, tomorrow_icon))
-    image.paste(tomorrow_icon, (6,74)) # The icon is in the bottom left corner
+        # All the tomorrows information
+        tomorrow_icon = weatherService.iconize_weather(weather_data["tomorrow_weather_code"])
+        tomorrow_icon = Image.open(os.path.join(weather_icons, tomorrow_icon))
+        image.paste(tomorrow_icon, (6,74)) # The icon is in the bottom left corner
 
-    tomorrow_temperature = f"{str(weather_data['tomorrow_temperature_2m_max'])}/{str(weather_data['tomorrow_temperature_2m_min'])}°"
-    draw.text((6,106), tomorrow_temperature, font = font16_bold, fill = 0) # The tomorrows temperature is bellow the icon
+        tomorrow_temperature = f"{str(weather_data['tomorrow_temperature_2m_max'])}/{str(weather_data['tomorrow_temperature_2m_min'])}°"
+        draw.text((6,106), tomorrow_temperature, font = font16_bold, fill = 0) # The tomorrows temperature is bellow the icon
 
-    # All the day after tomorrows information
-    day_after_icon = weatherService.iconize_weather(weather_data["day_after_weather_code"])
-    day_after_icon = Image.open(os.path.join(weather_icons, day_after_icon))
-    image.paste(day_after_icon, (52,74))
+        # All the day after tomorrows information
+        day_after_icon = weatherService.iconize_weather(weather_data["day_after_weather_code"])
+        day_after_icon = Image.open(os.path.join(weather_icons, day_after_icon))
+        image.paste(day_after_icon, (52,74))
 
-    day_after_temperature = f"{str(weather_data['day_after_temperature_2m_max'])}/{str(weather_data['day_after_temperature_2m_min'])}°"
-    draw.text((52,106), day_after_temperature, font = font16_bold, fill = 0)
+        day_after_temperature = f"{str(weather_data['day_after_temperature_2m_max'])}/{str(weather_data['day_after_temperature_2m_min'])}°"
+        draw.text((52,106), day_after_temperature, font = font16_bold, fill = 0)
+    except:
+        pass
+        # TODO: desing an error icon and
 
     # RIGHT SEGMENT (CALENDAR/AGENDA)
-    # TODO: writing this part and also the logic part
+    try:
+        calService = CalendarHelper(caldavURL, caldavUser, caldavPassword, timezone=timezone, caldavBlacklist=caldavBlacklist)
+        calendar_data = calService.fetch_cals()
+        #print(calendar_data)
+
+        last_date: str = None
+        max_agenda_lines = 7
+        agenda_lines = 0
+
+        agenda_x = 96
+        agenda_y = 16
+        font_size = 13
+
+        for event in calendar_data:
+            text: str = ''
+            bold: bool = False
+
+            event_date = dt.datetime.strftime(event["DTSTART"], "%A, %d %b")
+            if event_date != last_date:
+
+                last_date = event_date
+                # check if date is today or tomorrow
+                if last_date == day:
+                    text = "Hoy"
+                    bold = True
+                elif last_date == tomorrow:
+                    text = "Mañana"
+                    bold = True
+                else:
+                    text = last_date
+                    bold = True
+                
+                coords_y = font_size * agenda_lines + agenda_y
+                if coords_y >= screenHeight - font_size*2:
+                    break
+                draw.text((agenda_x, coords_y), text, font = font16_bold, fill = 0)
+                agenda_lines += 1
+                last_date = event_date
+
+            text = f'-{event["SUMMARY"]}'
+            
+            coords_y = font_size * agenda_lines + agenda_y
+            if coords_y >= screenHeight - font_size:
+                break
+            draw.text((agenda_x, coords_y), text, font = font16, fill = 0)
+            agenda_lines += 1
+            
+    except:
+        pass
+    # TODO: clean the code and comment
 
     # draw.line([(0,50),(50,0)], fill = 0,width = 1)
     # draw.chord((10, 60, 50, 100), 0, 360, fill = 0)

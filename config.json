@@ -12,5 +12,10 @@
   "latitude": 40.4084,
   "longitude": -3.6876,
   "timezone": "Europe/Madrid",
-  "locales": "es_ES.UTF-8"
+  "locales": "es_ES.UTF-8",
+
+  "caldavURL": "",
+  "caldavUser": "",
+  "caldavPassword": "",
+  "caldavBlacklist": "blocked cal 1, blocked cal 2"
 }
